@@ -157,7 +157,17 @@
 
                 // Limpiar nombre
                 if (row.name) {
-                    cleanedRow.name = cleanString(row.name);
+                    const originalName = row.name;
+                    let cleanedName = cleanString(row.name);
+                    // Eliminar acentos y convertir Ñ a N
+                    cleanedName = removeAccents(cleanedName);
+                    // Eliminar cualquier caracter que NO sea letra, número, punto, guión, guión bajo o espacio
+                    cleanedName = cleanedName.replace(/[^a-zA-Z0-9._\-\s]/g, '');
+                    cleanedRow.name = cleanedName;
+
+                    if (originalName !== cleanedName) {
+                        foundErrors.push(`Fila ${rowNum}: Nombre corregido de "${originalName}" a "${cleanedName}"`);
+                    }
                 } else {
                     foundErrors.push(`Fila ${rowNum}: El campo 'name' está vacío`);
                 }
