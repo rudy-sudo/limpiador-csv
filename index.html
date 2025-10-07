@@ -190,12 +190,23 @@
                 if (row.username) {
                     const originalUsername = row.username;
                     let cleanedUsername = cleanString(row.username);
-                    cleanedUsername = removeAccents(cleanedUsername).toLowerCase();
+                    // Primero eliminar acentos
+                    cleanedUsername = removeAccents(cleanedUsername);
+                    // Convertir a minúsculas
+                    cleanedUsername = cleanedUsername.toLowerCase();
+                    // Eliminar espacios
                     cleanedUsername = cleanedUsername.replace(/\s+/g, '');
+                    // Eliminar cualquier caracter que NO sea letra, número, punto, guión o guión bajo
+                    cleanedUsername = cleanedUsername.replace(/[^a-z0-9._-]/g, '');
                     cleanedRow.username = cleanedUsername;
 
                     if (originalUsername !== cleanedUsername) {
                         foundErrors.push(`Fila ${rowNum}: Username corregido de "${originalUsername}" a "${cleanedUsername}"`);
+                    }
+
+                    // Validar que el username solo contenga caracteres permitidos
+                    if (!/^[a-z0-9._-]+$/.test(cleanedUsername)) {
+                        foundErrors.push(`Fila ${rowNum}: Username contiene caracteres no permitidos "${cleanedUsername}"`);
                     }
 
                     if (seenUsernames.has(cleanedUsername)) {
